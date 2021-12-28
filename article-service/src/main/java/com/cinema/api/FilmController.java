@@ -18,7 +18,6 @@ import java.util.List;
 public final class FilmController {
 
     private final FilmService filmService;
-    private final String userService = "http://localhost:8081";
 
     @GetMapping
     public ResponseEntity<List<Film>> index(){
@@ -71,11 +70,10 @@ public final class FilmController {
     }
 
     @DeleteMapping("/{id}/{username}/{password}/{usertype}")
-    public ResponseEntity<Void> deleteFilmById(@PathVariable long id, @PathVariable String username, @PathVariable String password, @PathVariable String usertype){
+    public ResponseEntity<Void> deleteFilmById(@PathVariable long id, @PathVariable String username, @PathVariable String password){
         try{
             ResponseEntity<Void> response =
-                    new RestTemplate().exchange("http://localhost:8081/users/permission/"+username+"/"+password+"/"+usertype, HttpMethod.GET, null, Void.class);
-            //ResponseEntity<Void> response = restTemplate.exchange(userService);
+                    new RestTemplate().exchange("http://localhost:8081/users/permission/"+username+"/"+password+"/"+"ADMIN", HttpMethod.GET, null, Void.class);
             response.getStatusCode();
             if (response.getStatusCodeValue() == 200) {
                 filmService.delete(id);

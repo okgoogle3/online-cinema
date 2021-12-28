@@ -4,8 +4,10 @@ import com.cinema.api.dto.ComplaintDTO;
 import com.cinema.repo.model.Complaint;
 import com.cinema.service.ComplaintService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.util.List;
@@ -46,11 +48,16 @@ public class ComplaintController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Void> updateStatus(@PathVariable long id) {
+    public ResponseEntity<Void> updateStatus(@PathVariable long id, @PathVariable String username, @PathVariable String password) {
         try{
-
-            complaintService.updateComplaintStatus(id);
-            return ResponseEntity.noContent().build();
+            ResponseEntity<Void> response =
+                    new RestTemplate().exchange("http://localhost:8081/users/permission/"+username+"/"+password+"/"+"MODERATOR", HttpMethod.GET, null, Void.class);
+            response.getStatusCode();
+            if (response.getStatusCodeValue() == 200) {
+                complaintService.updateComplaintStatus(id);
+                return ResponseEntity.noContent().build();
+            }
+            throw new Exception("You don't have permission for this");
         }catch (Exception e){
             return ResponseEntity.notFound().build();
         }
