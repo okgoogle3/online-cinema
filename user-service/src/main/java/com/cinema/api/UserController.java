@@ -69,12 +69,27 @@ public class UserController {
         }
     }
 
-    @PatchMapping("/{id}")
+    @PostMapping("/admin")
+    public ResponseEntity<Void> createAdmin(@RequestBody UserDTO user) {
+        try {
+            String username = user.getUsername();
+            userService.getUserByUsername(username);
+            return ResponseEntity.badRequest().build();
+        } catch (Exception e) {
+            String username = user.getUsername();
+            String password = user.getPassword();
+            long id = userService.createAdmin(username, password);
+            return ResponseEntity.created(URI.create(String.format("/users/%d", id))).build();
+
+        }
+    }
+
+    @PatchMapping("/{id}/{username}/{password}/{usertype}")
     public ResponseEntity<Void> updateUsertype(
             @PathVariable long id,
-            @RequestBody String username,
-            @RequestBody String password,
-            @RequestBody UserType usertype) {
+            @PathVariable String username,
+            @PathVariable String password,
+            @PathVariable UserType usertype) {
         try {
             if (userService.getUsertypeByNamePass(username, password) != UserType.ADMIN)
                 throw new Exception("You don't have permission for that");
@@ -84,7 +99,21 @@ public class UserController {
         } catch (Exception e){
             return ResponseEntity.badRequest().build();
         }
+    }
 
+    @PatchMapping("/{id}/{oldPassword}/{newPassword}")
+    public ResponseEntity<Void> updateUserPassword(
+            @PathVariable long id,
+            @PathVariable String oldPassword,
+            @PathVariable String newPassword
+            ) {
+        try {
+            userService.setUserPassword(id, oldPassword, newPassword);
+            return ResponseEntity.noContent().build();
+
+        } catch (Exception e){
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @DeleteMapping("/{id}")

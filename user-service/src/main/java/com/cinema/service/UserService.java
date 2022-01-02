@@ -56,9 +56,27 @@ public final class UserService {
         userRepo.save(user);
     }
 
+    public void setUserPassword(long id, String oldPassword, String newPassword) throws Exception {
+        final Optional<User> maybeUser = userRepo.findById(id);
+        if(maybeUser.isEmpty()) throw new Exception();
+        User user = maybeUser.get();
+        if (user.getPassword().equals(oldPassword)) {
+            user.setPassword(newPassword);
+            userRepo.save(user);
+        }
+    }
+
     public long create(String username, String password) {
 
         User user = new User(username, password);
+        User savedUser = userRepo.save(user);
+        return savedUser.getId();
+    }
+
+    public long createAdmin(String username, String password) {
+
+        User user = new User(username, password);
+        user.setType(UserType.ADMIN);
         User savedUser = userRepo.save(user);
         return savedUser.getId();
     }
