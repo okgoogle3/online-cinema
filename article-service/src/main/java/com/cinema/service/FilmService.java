@@ -23,7 +23,7 @@ public final class FilmService {
         else return maybeFilm.get();
     }
 
-    public long create(long videoId, String title, String producer, String date, long boxOffice) throws Exception {
+    public long create(long videoId, String title, String producer, String date, long boxOffice) {
         final Film film = new Film(videoId, title, producer, date, boxOffice);
         final Film savedFilm = filmRepo.save(film);
         return savedFilm.getId();

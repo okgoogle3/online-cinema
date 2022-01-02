@@ -69,7 +69,7 @@ public final class FilmController {
 
     }
 
-    @DeleteMapping("/{id}/{username}/{password}/{usertype}")
+    @DeleteMapping("/{id}/{username}/{password}")
     public ResponseEntity<Void> deleteFilmById(@PathVariable long id, @PathVariable String username, @PathVariable String password){
         try{
             ResponseEntity<Void> response =
