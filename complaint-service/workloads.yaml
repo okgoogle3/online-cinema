@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: article-service
+spec:
+  selector:
+    app: article-service
+  type: NodePort
+  ports:
+    - name: http
+      port: 8080
+      nodePort: 31000
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: article-service
+spec:
+  selector:
+    matchLabels:
+      app: article-service
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: article-service
+    spec:
+      containers:
+        - name: server
+          image: okgoogle3/article-service
+          ports:
+            - name: http
+              containerPort: 8080
